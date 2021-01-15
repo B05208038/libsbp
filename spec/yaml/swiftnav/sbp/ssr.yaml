@@ -517,6 +517,42 @@ definitions:
               See GNSS-SSR-ArrayOfCorrectionPoints field bitmaskOfGrids but
               note the definition of the bits is inverted.
 
+ - SatelliteAPC:
+     short_desc: Antenna phase center correction.
+     desc: |
+       Contains phase center offset and elevation variation corrections for one
+       signal on a satellite.
+     fields:
+       - sid:
+           type: GnssSignal
+           desc: GNSS signal identifier (16 bit)
+       - pco:
+           type: array
+           size: 3
+           fill: s16
+           units: 1 mm
+           desc: |
+             Mean phase center offset, X Y and Z axises. See IGS ANTEX file
+             format description for coordinate system definition.
+       - pcv:
+           type: array
+           size: 20
+           fill: s8
+           units: 1 mm
+           desc: |
+             Elevation dependent phase center variations. First element is 0
+             degrees separation from the Z axis, subsequent elements represent
+             elevation variations in 1 degree increments.
+
+ - MSG_SSR_SATELLITE_APC:
+     id: 0x0604
+     short_desc: Satellite antenna phase center corrections
+     fields:
+       - apc:
+           type: array
+           fill: SatelliteAPC
+           desc: Satellite antenna phase center corrections
+
  - MSG_SSR_ORBIT_CLOCK_DEP_A:
     id: 0x05DC
     short_desc: Deprecated
