@@ -256,3 +256,22 @@ message MsgSsrTileDefinition {
     uint32 cols = 8;
     uint64 bitmask = 9;
 }
+
+/** Antenna phase center correction.
+ *
+ * Contains phase center offset and elevation variation corrections for one
+ * signal on a satellite.
+ */
+message SatelliteAPC {
+    gnss.GnssSignal sid = 1;
+    repeated sint32 pco = 2;
+    repeated sint32 pcv = 3;
+}
+
+/** Satellite antenna phase center corrections
+ *
+None
+ */
+message MsgSsrSatelliteApc {
+    repeated SatelliteAPC apc = 1;
+}

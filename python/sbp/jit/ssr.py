@@ -819,6 +819,72 @@ correction points, not lists of points.
     return res, off, length
 
   
+class SatelliteAPC(object):
+  """SBP class for message SatelliteAPC
+
+  You can have SatelliteAPC inherit its fields directly
+  from an inherited SBP object, or construct it inline using a dict
+  of its fields.
+
+  
+  Contains phase center offset and elevation variation corrections for one
+signal on a satellite.
+
+
+  """
+  __slots__ = ['sid',
+               'pco',
+               'pcv',
+               ]
+  @classmethod
+  def parse_members(cls, buf, offset, length):
+    ret = {}
+    (__sid, offset, length) = GnssSignal.parse_members(buf, offset, length)
+    ret['sid'] = __sid
+    (__pco, offset, length) = get_fixed_array(get_s16, 3, 2)(buf, offset, length)
+    ret['pco'] = __pco
+    (__pcv, offset, length) = get_fixed_array(get_s8, 20, 1)(buf, offset, length)
+    ret['pcv'] = __pcv
+    return ret, offset, length
+
+  def _unpack_members(self, buf, offset, length):
+    res, off, length = self.parse_members(buf, offset, length)
+    if off == offset:
+      return {}, offset, length
+    self.sid = res['sid']
+    self.pco = res['pco']
+    self.pcv = res['pcv']
+    return res, off, length
+
+  
+SBP_MSG_SSR_SATELLITE_APC = 0x0604
+class MsgSsrSatelliteApc(SBP):
+  """SBP class for message MSG_SSR_SATELLITE_APC (0x0604).
+
+  You can have MSG_SSR_SATELLITE_APC inherit its fields directly
+  from an inherited SBP object, or construct it inline using a dict
+  of its fields.
+
+  
+
+  """
+  __slots__ = ['apc',
+               ]
+  @classmethod
+  def parse_members(cls, buf, offset, length):
+    ret = {}
+    (__apc, offset, length) = get_array(SatelliteAPC.parse_members)(buf, offset, length)
+    ret['apc'] = __apc
+    return ret, offset, length
+
+  def _unpack_members(self, buf, offset, length):
+    res, off, length = self.parse_members(buf, offset, length)
+    if off == offset:
+      return {}, offset, length
+    self.apc = res['apc']
+    return res, off, length
+
+  
 SBP_MSG_SSR_ORBIT_CLOCK_DEP_A = 0x05DC
 class MsgSsrOrbitClockDepA(SBP):
   """SBP class for message MSG_SSR_ORBIT_CLOCK_DEP_A (0x05DC).
@@ -1183,6 +1249,7 @@ msg_classes = {
   0x05FB: MsgSsrStecCorrection,
   0x05FC: MsgSsrGriddedCorrection,
   0x05F6: MsgSsrTileDefinition,
+  0x0604: MsgSsrSatelliteApc,
   0x05DC: MsgSsrOrbitClockDepA,
   0x05EB: MsgSsrStecCorrectionDepA,
   0x05F0: MsgSsrGriddedCorrectionNoStdDepA,
